@@ -33,3 +33,9 @@ Fresh per-recording jobs prevent duplicate output appends across runs, as approv
 No representative actual CSV/output file was provided. Exact real-export timestamp bytes and delimiters remain inferred from the working code and screenshot. No claim is made that spreadsheet-displayed `52:24.0` itself is a parseable full timestamp. No real-recording, multi-gigabyte, throughput, peak-memory, browser automation, visual QA, mobile, deployed-host, proxy or HTTPS transfer tests were performed. Synthetic byte equality only establishes equivalence for the tested fixtures with the pinned runtime.
 
 No GitHub or hosting deployment has been performed. Follow README.md to deploy and complete the listed acceptance checks.
+
+## Branding and sharing update
+
+Applied the attached App_Preferences(3).md to the ECG processing interface. Inspected the live reference app HTML and CSS for its locally loaded Source Sans 3/Cormorant Garamond typography and ruby/bronze/navy/green roles. Added richer palettes in all themes, visible Quick guide/Share app/Copy link controls, native dialogs, an ECG emblem, PNG favicons/touch icon and a 1200 × 630 PNG sharing card. Processing code is unchanged.
+
+JavaScript syntax checks and six simulated sharing/guide checks passed: direct copy, denied/unavailable clipboard fallback, native sharing, cancellation, clean local fallback and opening the quick guide. Palette text/button contrast pairs were calculated against the token surfaces. Production build was exercised with a reserved example origin; this is a test input, not a claimed deployed domain. Static output contains absolute canonical/Open Graph/card URLs and local branding/font assets. Actual Vercel deployment, mobile layout, native share dialogs, clipboard permission prompts and social-platform previews remain untested.

@@ -1,6 +1,6 @@
 # ECG Studio — six-hour CSV splitter
 
-A compact browser interface around the supplied pandas ECG-splitting workflow. The frontend is static and can be hosted on Vercel. A separately deployed Python service processes uploads. Users of the deployed app do not need Python, packages or JupyterLab.
+A compact browser interface around the supplied pandas ECG-splitting workflow. The frontend is static, with a small Node build step for production sharing metadata, and can be hosted on Vercel. A separately deployed Python service processes uploads. Users of the deployed app do not need Python, packages or JupyterLab.
 
 **Status:** source packaged and automated tests passed. No GitHub repository, Vercel project or backend service has been created or deployed. Browser interaction and real-recording compatibility remain unverified. See TEST_REPORT.md.
 
@@ -12,7 +12,10 @@ A compact browser interface around the supplied pandas ECG-splitting workflow. T
 | frontend/styles.css | Responsive ruby-accented Light/OLED/Colored themes |
 | frontend/app.js | Sequential batches, chunk uploads, status and download actions |
 | frontend/config.js | Public Python-service address |
-| frontend/vercel.json | Static hosting response headers |
+| frontend/vercel.json | Build/output settings and response headers |
+| frontend/build.mjs | Production canonical and sharing metadata |
+| frontend/sharing.js | Quick guide, native sharing and copy/fallback controls |
+| frontend/assets | Local fonts, ECG logo, icons and social preview |
 | backend/app.py | Job API, worker, downloads and cleanup |
 | backend/splitter.py | Original pandas transformations and segmentation |
 | reference/original_splitter.py | Unmodified supplied script, used as test oracle |
@@ -91,7 +94,7 @@ python -W ignore::ResourceWarning -m unittest discover -s tests -v
 node --check frontend/app.js
 ```
 
-Node is only needed for this optional JavaScript syntax check, not serving the frontend. The ignored warnings come from open file handles in the unchanged reference script.
+Node is needed for deployment builds, the sharing checks, and JavaScript syntax checking. It is not needed to serve a local source preview. Run `node tests/test_frontend.mjs` for simulated sharing/guide checks. Production builds require ECG_PUBLIC_URL or Vercel’s production-domain environment variable. The ignored warnings come from open file handles in the unchanged reference script.
 
 ## GitHub setup
 
@@ -126,19 +129,34 @@ Use a persistent Python/container service. One practical route is a Render Docke
 
 Provider references: https://render.com/docs/docker , https://render.com/docs/disks , https://render.com/docs/web-services . Render persistent disks are attached to paid services; do not assume a free ephemeral service can retain large recordings. Snapshots can retain data beyond application deletion.
 
-## Deploy the frontend to Vercel
+## Deploy or update the frontend on Vercel
 
-1. Edit `frontend/config.js`: replace `http://localhost:5000` with the backend's actual HTTPS address. This address is public configuration; no API secret belongs here.
-2. Commit and push the change.
-3. In Vercel, create/import a project from this GitHub repository.
-4. Set **Root Directory** to `frontend`; use the static/Other preset, no build command and no install command. Serve the root directory as the output directory (`.` if requested).
-5. Deploy. Record the Vercel HTTPS origin, without a trailing slash.
-6. Update the backend environment variable `ECG_FRONTEND_ORIGIN` to that exact origin, then redeploy/restart the backend while no jobs are running.
-7. Open the Vercel site and expand **Service connection & privacy**. Confirm it reports Connected.
-8. Process a small synthetic CSV first. Inspect output names, six-hour boundaries and downloaded row values. Then try a de-identified representative recording, followed by progressively larger files. Compare with the original script run into an empty output folder using the pinned pandas version.
-9. Check mobile layout, keyboard access, themes, file selection, upload retries, individual downloads, ZIP downloads and deletion. These browser checks have not yet been completed.
+The current project dashboard supplied by the owner identifies **ecg-studio-frontend**. Its dashboard deployment URL is not the public app address. Do not rename or replace the existing project unnecessarily.
 
-A successful Vercel frontend deployment does **not** deploy the Python service. No secret frontend environment variables are needed by this buildless app. Backend settings belong in the backend host's environment dashboard.
+1. Upload/commit the extracted project contents into the existing connected GitHub repository, replacing earlier source files. Keep `backend` and `frontend` directly in the repository root. Do not upload this ZIP itself as the source.
+2. In your existing Vercel project's Settings → Build and Deployment, use these values:
+
+| Setting | Value |
+| --- | --- |
+| Framework/Application Preset | Other |
+| Root Directory | frontend |
+| Build Command | node build.mjs |
+| Output Directory | dist |
+| Install Command | empty |
+
+**These build/output settings replace the initial no-build setup.** The build now writes crawler-readable canonical and social-sharing metadata before deployment.
+
+3. In Settings → Environment Variables, set `ECG_API_URL` to the real Python backend HTTPS origin (no trailing path). This is public configuration, not a secret. If the backend is not deployed yet, the interface can deploy, but processing will remain unavailable. Without this variable, config.js is copied as-is.
+4. Enable Vercel system environment variables if they are disabled. The build reads `VERCEL_PROJECT_PRODUCTION_URL` to obtain the actual assigned production domain. It deliberately does not use a long per-deployment preview URL. Alternatively, set `ECG_PUBLIC_URL` to your confirmed HTTPS production origin; this explicit value takes precedence. No unverified domain is hardcoded.
+5. Redeploy after settings/environment changes. Once Ready, click Visit, then copy the public address from the app's browser tab. Use the project's Domains page to confirm its production domain. A `vercel.com/...` dashboard address is not the app URL.
+6. Set the backend's `ECG_FRONTEND_ORIGIN` to that exact public origin, then restart it while no jobs are running.
+7. Confirm the service connection. Process a synthetic CSV first, then a representative de-identified recording and progressively larger files.
+8. Try Quick guide, Copy link and Share app. Copy link should copy the production homepage without job IDs, tokens or query strings. Share app uses native sharing where supported, otherwise copying and a visible selectable address. Clipboard denial has a visible fallback. Only the app address is shared.
+9. Verify that `<production-origin>/assets/social-preview.png` opens. Inspect page source for canonical, og:url, og:image and Twitter card tags. They must use your actual production origin. The PNG is 1200 × 630 and contains the app emblem/title. Test a shared link on your intended platform; caches, site access protection and platform cropping can affect previews. Do not remove access protection solely to force a preview.
+
+Frontend fonts and branding assets are stored locally, including Source Sans 3 and Cormorant Garamond with their licences. No font provider request is needed when visitors open the app. Light uses warm tan and burgundy/navy accents; OLED uses a black background with bright text; Colour uses deep plum and burgundy surfaces. Quick guide, Share app and Copy link are visible together in the header and wrap on narrow screens.
+
+A Vercel frontend deployment does not deploy Python. Provider reference for production-domain variables: https://vercel.com/docs/environment-variables/system-environment-variables . No Vercel account changes have been made here.
 
 ## Updating safely
 

@@ -165,3 +165,15 @@ Keep synthetic equivalence tests passing before pushing a processing change. Avo
 ## Known limits
 
 No unlimited capacity, folder import, server-side batch-wide archive, active-job cancellation, durable external queue, or refresh/session recovery. Browser processing and full real-file checks are outstanding. Errors intentionally avoid parser exception text because it can reveal raw data; the UI reports broad format/resource causes rather than claiming an exact diagnosis. Large-scale concurrency needs a different queue/storage design. This is a single-instance implementation for the requested simple workflow.
+
+## Troubleshooting “Cannot reach the Python service”
+
+The frontend and backend are two deployments. A working Vercel page does not mean the Python API exists. Earlier packages copied `http://localhost:5000` when ECG_API_URL was absent; the updated production build writes an unconfigured value instead and reports that state explicitly. Local source preview still uses localhost automatically.
+
+1. Deploy the Python backend using the steps above. Open its HTTPS `/health` address and confirm JSON with `status: ok`. Do not put `/health` into the service-address input; use only the origin.
+2. In Vercel, set `ECG_API_URL` to that backend HTTPS origin and redeploy. Alternatively, open **Service connection & privacy**, enter the backend origin and click **Save & test connection**. That optional override is saved only in this browser and takes precedence over build configuration; clear the field and save to remove it, then reload to use build configuration again.
+3. On the Python host, set `ECG_FRONTEND_ORIGIN` to the exact production frontend origin. A wrong allowed origin, stopped backend, DNS failure or network block can all appear as a browser connection failure; the UI does not claim to distinguish them without evidence.
+4. A cold service may take time to start. The health check has a 20-second timeout; wait and test again. No recording is uploaded until the health check succeeds. A successful synthetic health response is not a real deployment check.
+5. The screenshot shows an approximately 1,580 MiB input. Allocate enough backend disk for that recording plus expanded outputs and ZIP copies; do not assume a small free service can handle it.
+
+Latest palette update deepens the Light backgrounds to copper/tan, retains true-black OLED with burgundy surfaces and ruby actions, and uses deep aubergine/burgundy in Colour. Text contrast against the main token surfaces remains at least 4.5:1. This calculation is not a browser visual test.

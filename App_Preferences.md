@@ -1,6 +1,6 @@
 # My App Design Preferences
 
-Version 19 · Consolidated from the Meiosis and Chromosome 9 app discussions · Updated 18 October 2026
+Version 20 · Consolidated from the Meiosis and Chromosome 9 app discussions · Updated 18 October 2026
 
 ## How to use this brief
 
@@ -331,3 +331,11 @@ Keep the simple approved layout: Example → Demonstrated answer → Why → Rem
 Maintain a coverage map that links topics and practice skills to concrete activities, checks all glossary and visual references, and records unresolved evidence gaps. Update it when adding new material. Never invent missing results, exact plot percentages, undocumented software behaviour or clinical evidence. Describe coverage as content availability, not proof of complete knowledge or validated mastery.
 
 Current implementation: app 2.5.0 adds 45 worked cases across all 15 topics: evidence interpretation, method connections and study defence. The app now has 220 example activities representing 200 distinct worked scenarios and 660 dropdown-question slots. Shared concepts are reused across app surfaces. Every one of the six objectives, 15 topics, 105 glossary entries, seven result figures, two tables and the methodology visual is mapped in COVERAGE_AUDIT.md and content/coverage-audit.json. The optional practice-focus dropdown exposes the six learning aspects. Earlier notes, answers and progress are preserved; older final-check cursors enter the added practice cases before the concluding checks.
+
+## ECG Studio: deeper themes and processing-service setup — 18 October 2026
+
+When requesting deeper colours, change the main background, panels, input surfaces and actions substantially in every theme. For ECG Studio, use a richer copper/tan Light theme with dark wine/navy text, true-black OLED with deep burgundy surfaces and clear ruby actions, and deep aubergine/burgundy Colour with bright text. Preserve readable secondary text, control outlines and focus states. Calculate text contrast, and distinguish that check from real-browser visual acceptance. Do not treat a small accent change as satisfying this preference.
+
+Make service-dependent failures actionable. A hosted ECG frontend must never silently use a localhost Python-service fallback. Explain when the backend is unconfigured, unavailable or returning an incompatible response. Provide an expandable service-address field and a Save & test connection action; store that preference only in the current browser. Do not claim that changing the interface deploys or repairs an absent backend. Tell the owner which backend URL and allowed frontend origin must be configured, without inventing a live service address. Keep sharing actions limited to the app address; do not share recording data or job credentials. These operational requirements apply to apps that actually use a separate processing service, not unrelated educational apps.
+
+Packaged ECG Studio update: all three theme palettes deepened; localhost rejected on hosted pages; missing service configuration explained; optional browser-local service address and health check added. Automated token-contrast and simulated connection checks passed. Live backend connection, real recordings and browser appearance remain unverified until deployment testing.

@@ -1,2 +1,3 @@
-// Public service URL only. Never place secrets in this file.
-window.ECG_API_URL = 'http://localhost:5000';
+// Public Python service origin. Production builds can set ECG_API_URL.
+// null means no hosted backend has been configured; local preview uses localhost.
+window.ECG_API_URL = null;

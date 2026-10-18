@@ -18,5 +18,6 @@ await rm(path.join(root,'dist'),{recursive:true,force:true});await mkdir(path.jo
 for(const f of ['index.html','styles.css','app.js','sharing.js','config.js','assets'])await cp(path.join(root,f),path.join(root,'dist',f),{recursive:true});
 const html=(await readFile(path.join(root,'index.html'),'utf8')).replace('<!-- PRODUCTION_METADATA -->',metadata);
 await writeFile(path.join(root,'dist/index.html'),html);
+if(!process.env.ECG_API_URL)await writeFile(path.join(root,'dist/config.js'),'window.ECG_API_URL = null;\n');
 if(process.env.ECG_API_URL){const api=new URL(process.env.ECG_API_URL);if(api.protocol!=='https:'||api.username||api.password||api.search||api.hash||api.pathname!=='/')throw Error('ECG_API_URL must be the Python service HTTPS origin.');await writeFile(path.join(root,'dist/config.js'),'window.ECG_API_URL = '+JSON.stringify(api.origin)+';\n');}
 console.log('Built static frontend with production canonical and sharing metadata.');

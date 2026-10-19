@@ -1,6 +1,6 @@
 # My App Design Preferences
 
-Version 20 · Consolidated from the Meiosis and Chromosome 9 app discussions · Updated 18 October 2026
+Version 21 · Consolidated from the Meiosis and Chromosome 9 app discussions · Updated 18 October 2026
 
 ## How to use this brief
 
@@ -339,3 +339,9 @@ When requesting deeper colours, change the main background, panels, input surfac
 Make service-dependent failures actionable. A hosted ECG frontend must never silently use a localhost Python-service fallback. Explain when the backend is unconfigured, unavailable or returning an incompatible response. Provide an expandable service-address field and a Save & test connection action; store that preference only in the current browser. Do not claim that changing the interface deploys or repairs an absent backend. Tell the owner which backend URL and allowed frontend origin must be configured, without inventing a live service address. Keep sharing actions limited to the app address; do not share recording data or job credentials. These operational requirements apply to apps that actually use a separate processing service, not unrelated educational apps.
 
 Packaged ECG Studio update: all three theme palettes deepened; localhost rejected on hosted pages; missing service configuration explained; optional browser-local service address and health check added. Automated token-contrast and simulated connection checks passed. Live backend connection, real recordings and browser appearance remain unverified until deployment testing.
+
+## ECG Studio standalone Windows decision — 19 October 2026
+
+The owner approved a standalone Windows version instead of continuing with the hosted Python-service setup. Keep ECG Studio branding and the deeper three-theme styling. Let the owner choose local CSV recordings and an output folder; preserve the existing Python algorithm and original files. Ordinary use should require no separate Python installation, JupyterLab, Render, Vercel, internet access or uploads. Bundle dependencies when creating the Windows application. Keep host-specific cloud controls out of this local interface. Preserve completed outputs on disk until the owner deletes them.
+
+Deliver the complete source and a reproducible Windows build when a Windows binary cannot be built in the available environment. Explicitly distinguish source prepared, processing tested, Windows bundle built and Windows bundle tested. Do not label a source ZIP as a ready-to-run executable. This platform choice applies to ECG Studio and does not convert unrelated apps into Windows applications.

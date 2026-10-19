@@ -1,49 +1,30 @@
-# Verification report
+# ECG Studio Windows verification report
 
-## Automated checks actually performed
+## Actually performed here
 
-Python 3.12; pandas 2.2.3; Flask 3.1.2. Synthetic input is generated during tests; no real ECG data is included.
+- Five processing tests passed using Python 3.12 and pandas 2.2.3. They execute the unchanged original script and compare output filenames and complete CSV bytes against backend/splitter.py.
+- Fixtures cover six-hour boundaries, invalid rows, a 100,007-row recording crossing chunk boundaries, gaps, earlier unsorted timestamps, entirely invalid rows, and rejection of an existing output folder.
+- Python source compiled successfully; frontend/desktop.js passed Node syntax checking.
+- Desktop assets and the Windows icon were packaged from the established ECG Studio design.
 
-Processing comparisons execute the unchanged supplied script in an isolated temporary working directory, then execute `backend/splitter.py` on the same bytes. Output filenames and complete CSV bytes are compared exactly, covering serialized signal values, column ordering, timestamps, elapsed time and block numbers.
+## Included checks not executed here
 
-| Case | Check |
-| --- | --- |
-| Six-hour boundaries | Samples immediately before, exactly at six hours, and exactly at twelve hours; final partial window |
-| Invalid rows | Invalid timestamp and nonnumeric signal discarded; header/comment behaviour preserved |
-| Multiple chunks | 100,007 valid rows cross the 100,000-row reader boundary without duplication or loss |
-| Gaps and unsorted times | Empty windows omitted; earlier timestamps retain original negative-block behaviour |
-| Entirely invalid input | Reference and new processor both produce no CSVs; API reports failure |
-| Fresh output folder | Existing destination rejected instead of appending old results |
-| Job API | Chunk upload, offset mismatch, premature start, background completion, ZIP content, invalid download, deletion |
-| Same input filename | Separate job IDs and isolation between job tokens |
-| Validation | Empty input, unsupported extension and over-limit file rejected |
-| Expiry and access | Abandoned upload expiry; invalid job token blocked; allowed CORS origin only |
-| Failure cleanup | Failed recording input removed |
+The Windows workflow runs the five processing tests plus desktop service tests for authentication/host/origin checks, required choices, cancelled picker, direct-file batch success/failure, original preservation, fresh destinations, folder opening, clear/quit, stopping an active batch and insufficient disk space. Native dialogs are mocked in those service tests. It also builds the Windows executable and runs its synthetic --self-test for bundled imports, sample processing, HTML and icon availability.
 
-Result: **10 automated tests passed**. JavaScript syntax checked with `node --check frontend/app.js`.
+Flask/Waitress could not be installed from the package index in this workspace, so the desktop service tests and HTTP launcher were not run here. A Windows interpreter/runtime could not be downloaded here, and this Linux workspace has not produced or executed a Windows binary. The automatic Windows workflow has not been run on the user's GitHub account. No compiled executable is included in this source ZIP.
 
-The original script produces ResourceWarnings because its summary opens files without explicit closing. The comparison tests can suppress these warnings; the reference source remains unchanged.
+## Remaining Windows acceptance checks
 
-## Differences deliberately introduced
+After a successful Actions build: extract the complete app bundle; launch ECG_Studio.exe; verify native file/folder dialogs, all themes, keyboard navigation, open-folder actions, stop and clean shutdown. Test an invalid recording mixed with a valid recording, identical basenames in different folders, paths with spaces/non-ASCII characters, and re-running the same inputs. Confirm existing outputs and original recordings remain intact. Then compare a real representative recording with the original script before using large batches. No actual ECG input was supplied, so real-file compatibility, processing throughput, peak memory and multi-gigabyte reliability remain unverified.
 
-Fresh per-recording jobs prevent duplicate output appends across runs, as approved. The web layer adds bounded uploads, queue/status, ZIP creation, failure reporting, input cleanup and output expiry. All-invalid input is a visible failed job. These operational changes do not replace segmentation or signal transformations.
+The local workflow preserves the original cleaning/segmentation, replaces cloud uploads with direct local file reads, adds permanent user-chosen output storage, and uses fresh folders to prevent duplicate cross-run appends. No diagnostic interpretation or signal modification was added.
 
-## Not verified
+## Windows CI path-alias correction
 
-No representative actual CSV/output file was provided. Exact real-export timestamp bytes and delimiters remain inferred from the working code and screenshot. No claim is made that spreadsheet-displayed `52:24.0` itself is a parseable full timestamp. No real-recording, multi-gigabyte, throughput, peak-memory, browser automation, visual QA, mobile, deployed-host, proxy or HTTPS transfer tests were performed. Synthetic byte equality only establishes equivalence for the tested fixtures with the pinned runtime.
+The owner supplied a Windows run showing nine passing tests and one failure in the output-folder assertion. Windows reported the same temporary directory with long and 8.3 user-folder names (`runneradmin` and `RUNNER~1`). The test incorrectly required equal path strings. It now uses Path.samefile to check filesystem identity. No test was skipped and no processing code was changed. The corrected Windows workflow has not yet been rerun.
 
-No GitHub or hosting deployment has been performed. Follow README.md to deploy and complete the listed acceptance checks.
+## Specific processing-failure diagnostics
 
-## Branding and sharing update
+A supplied Windows screenshot confirms the executable opens, native input/output selection works and a real recording reaches a failed job. The screenshot does not identify the exception. Replaced the catch-all job message with separate disk-admission/reserve, no-valid-rows, encoding, CSV parser, permissions, missing-file, memory and general I/O categories. Disk messages report the actual available and safety-required bytes; raw parser exception text is never exposed. Error codes/types and safe capacity values are saved in the existing batch summary.
 
-Applied the attached App_Preferences(3).md to the ECG processing interface. Inspected the live reference app HTML and CSS for its locally loaded Source Sans 3/Cormorant Garamond typography and ruby/bronze/navy/green roles. Added richer palettes in all themes, visible Quick guide/Share app/Copy link controls, native dialogs, an ECG emblem, PNG favicons/touch icon and a 1200 × 630 PNG sharing card. Processing code is unchanged.
-
-JavaScript syntax checks and six simulated sharing/guide checks passed: direct copy, denied/unavailable clipboard fallback, native sharing, cancellation, clean local fallback and opening the quick guide. Palette text/button contrast pairs were calculated against the token surfaces. Production build was exercised with a reserved example origin; this is a test input, not a claimed deployed domain. Static output contains absolute canonical/Open Graph/card URLs and local branding/font assets. Actual Vercel deployment, mobile layout, native share dialogs, clipboard permission prompts and social-platform previews remain untested.
-
-## Deeper themes and connection correction
-
-Deepened backgrounds, surfaces and actions in all themes. Minimum tested text-token contrast ratios: Light 4.65:1, OLED 7.44:1, Colour 8.51:1. These calculations exclude antialiasing, disabled controls and the darker ends of action gradients; they are not a full accessibility audit.
-
-Six new simulated connection checks passed: missing hosted configuration, rejection of localhost on a hosted page, rejection of insecure remote HTTP, HTTPS origin normalization, valid synthetic health response, and localhost fallback only in local preview. The six existing simulated sharing/guide checks also passed. JavaScript syntax and a production build without ECG_API_URL passed; the built config correctly remains null instead of leaking localhost.
-
-The Python processing and API source were unchanged in this update; their ten passing tests from the prior update remain applicable. A real Python backend has not been deployed or connected by this work. Screenshot confirms a connection failure before upload but cannot establish whether the deployed URL, network, CORS or an absent service caused it. No claim is made that the user's live failure has been resolved before configuring and testing the actual backend.
+Six diagnostic tests passed here, including real-size reporting and absence of supplied private values from exception messages. Python compilation passed. The splitting implementation is unchanged. The updated packaged Windows app and the owner's recording have not been rerun here; the cause of that recording failure is still unconfirmed.

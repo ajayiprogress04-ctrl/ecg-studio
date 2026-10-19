@@ -55,12 +55,37 @@ jobs:
           if (-not (Test-Path $compiler)) { throw "Inno Setup compiler was not found." }
           & $compiler installer/ECG_Studio.iss
           if ($LASTEXITCODE -ne 0) { throw "Installer compilation failed." }
-      - name: Validate installer metadata
+      - name: Validate Windows installer
         shell: pwsh
         run: |
-          $file = Get-Item dist/installer/ECG_Studio_Setup_1.1.0.exe
+          $setup = (Resolve-Path "dist/installer/ECG_Studio_Setup_1.1.0.exe").Path
+          $file = Get-Item $setup
           if ($file.Length -lt 1000000) { throw "Installer is unexpectedly small." }
-          if ($file.VersionInfo.ProductName -ne 'ECG Studio') { throw "Installer product metadata is missing." }
+          $file.VersionInfo | Format-List ProductName, FileDescription, FileVersion
+
+          $target = Join-Path $env:RUNNER_TEMP "ECGStudioInstallTest"
+          $install = Start-Process -FilePath $setup -ArgumentList @(
+            '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', '/SP-',
+            ('/DIR="' + $target + '"')
+          ) -Wait -PassThru
+          if ($install.ExitCode -ne 0) { throw "Installer failed: $($install.ExitCode)" }
+
+          $exe = Join-Path $target "ECG_Studio.exe"
+          if (-not (Test-Path $exe)) { throw "Installed application is missing." }
+          $app = Get-Item $exe
+          if ($app.VersionInfo.ProductName.Trim() -ne 'ECG Studio') {
+            throw "Installed application branding is incorrect."
+          }
+          $test = Start-Process -FilePath $exe -ArgumentList '--self-test' -Wait -PassThru
+          if ($test.ExitCode -ne 0) { throw "Installed application test failed." }
+
+          $uninstaller = Join-Path $target "unins000.exe"
+          if (-not (Test-Path $uninstaller)) { throw "Uninstaller is missing." }
+          $remove = Start-Process -FilePath $uninstaller -ArgumentList @(
+            '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART'
+          ) -Wait -PassThru
+          if ($remove.ExitCode -ne 0) { throw "Uninstaller failed: $($remove.ExitCode)" }
+          if (Test-Path $exe) { throw "Uninstall did not remove the application." }
       - name: Create portable alternative
         shell: pwsh
         run: Compress-Archive -Path dist/ECG_Studio -DestinationPath ECG_Studio_Windows_Portable.zip

@@ -4,21 +4,24 @@ A local Windows version of ECG Studio. Double-click the built executable, choose
 
 **This ZIP contains the complete source and automated Windows build workflow. It does not contain a compiled executable.** The Windows build has not been run from this Linux workspace. The processing checks listed in TEST_REPORT.md passed here; Windows dialogs, the full local service and the packaged app still need the included Windows tests and a real Windows trial.
 
-## Get the Windows application without installing Python
+## Build the installer in your existing GitHub repository
 
-1. Extract this source ZIP.
-2. Create a new **private** GitHub repository named `ecg-studio-windows`. Keep the current web project separate; do not overwrite its repository or hosting configuration.
-3. Upload the **contents inside ECG_Studio_Windows** into that new repository, not the parent folder and not the ZIP itself. At repository root, you should see `desktop`, `backend`, `frontend`, `tests`, `reference`, `requirements-windows.txt`, `WINDOWS_START_HERE.txt`, `README.md`, `TEST_REPORT.md`, and `App_Preferences.md`.
-4. Include `.github/workflows/build-windows.yml`. If the upload interface skips `.github`, use **Add file → Create new file**, enter `.github/workflows/build-windows.yml` as the filename, paste the full contents of the supplied file, and commit. The complete workflow is included; no programming edits are necessary.
-5. Open the repository's **Actions** tab. Select **Build ECG Studio for Windows**. If GitHub asks you to enable Actions for your repository, enable the included workflow. Click **Run workflow**, select your main branch, then **Run workflow** again. The workflow also runs automatically for relevant changes pushed to `main`.
-6. Wait for a green successful run. It installs Python/packages on GitHub's Windows build machine, tests the source, builds ECG_Studio.exe, smoke-tests the bundled app, and creates the download. This does not install Python on your own computer.
-7. Open the successful run. Under **Artifacts**, download **ECG-Studio-Windows-x64**. GitHub wraps this artifact in a ZIP; extract it to find `ECG_Studio_Windows.zip`. Extract that ZIP too.
-8. Open the extracted `ECG_Studio` folder and double-click **ECG_Studio.exe**. Keep it together with the `_internal` folder. Create a shortcut if desired; do not move the executable out by itself.
-9. Keep the launcher window open while processing. The interface opens in your default browser at a local 127.0.0.1 address. This is a local desktop application, not a hosted website. Use **Close application** to finish.
+1. Extract this complete source ZIP. It contains two top-level folders: `.github` and `ECG_Studio_Windows`.
+2. Open https://github.com/ajayiprogress04-ctrl/ecg-studio . Upload/replace the `ECG_Studio_Windows` folder at repository root, preserving that folder name.
+3. Replace the repository's TOP-LEVEL `.github/workflows/build-windows.yml` with the supplied top-level workflow. If GitHub's upload interface omits dotfolders, open the existing workflow, click Edit and paste the complete contents of the supplied file. Do not put the workflow only inside ECG_Studio_Windows.
+4. Commit changes, open Actions, select Build ECG Studio for Windows and run the workflow if a run has not already started.
+5. A successful Windows run tests the code, builds and smoke-tests the app, compiles the installer and publishes two artifacts. The Windows run has not been performed from this workspace.
+6. Under Artifacts, download **ECG-Studio-Windows-Installer**. Extract the artifact ZIP to obtain **ECG_Studio_Setup_1.1.0.exe**.
+7. Double-click that setup file. Follow the installation wizard and optionally select Create a desktop shortcut. Python/packages are included; no separate installation is required for the recipient.
+8. Launch ECG Studio from the Start menu. Test a small recording and About the Developer. Your earlier output folders stay separate from the installation.
+9. Share **ECG_Studio_Setup_1.1.0.exe** directly with other users. It is the single installer file; recipients do not need to assemble `_internal` folders. A configured public download link can be added after real publication.
+10. To uninstall, close the running app and use Windows Settings → Apps → Installed apps → ECG Studio → Uninstall.
 
-GitHub's standard runner allowance and Actions policy apply to your account; no cloud compute plan or ongoing hosting subscription is required by this app. No repository, workflow run, release, executable or deployment has been created on your account here. You can download artifacts only while signed in with repository read access. See https://docs.github.com/en/actions/how-tos/manage-workflow-runs/manually-run-a-workflow and https://docs.github.com/en/actions/how-tos/manage-workflow-runs/download-workflow-artifacts .
+The portable alternative is still built as **ECG-Studio-Windows-Portable**. For that edition, extract the complete ZIP and keep ECG_Studio.exe beside its `_internal` folder. Do not confuse the portable ZIP with the new installer artifact.
 
-If the build fails, open the red run, open the failing step and share its error. Do not upload recordings as part of troubleshooting. If Windows blocks the unsigned build, follow your institution's software approval process; do not disable security protections.
+The setup file is unsigned. A verified publisher signature requires a separate code-signing certificate and signing process. Follow your institution's software approval process; do not disable security protections. No repository visibility, public release, signing or deployment has been changed here.
+
+GitHub's runner allowance and Actions policy apply to your account. See https://docs.github.com/en/actions/how-tos/manage-workflow-runs/manually-run-a-workflow and https://docs.github.com/en/actions/how-tos/manage-workflow-runs/download-workflow-artifacts .
 
 ## Use the app
 
@@ -80,3 +83,30 @@ python -m PyInstaller --clean --noconfirm --onedir --paths . --name ECG_Studio -
 ```
 
 Output is `dist/ECG_Studio/ECG_Studio.exe` plus its `_internal` folder. The Windows workflow runs `--self-test` against this bundle before publishing an artifact. Distribution includes Python/package components; retain their licence files and the bundled font licences. No code signing is included.
+
+## A recording fails after the app opens
+
+Check free space on the output drive first. The admission check is six times the selected input size plus 256 MiB; a 1,580 MiB recording needs about 9.5 GiB free under this conservative check. Choosing another folder on the same drive does not increase free space. Choose a different drive or free space, then retry. The check estimates capacity; it does not mean every recording produces that much output.
+
+The updated desktop service reports a specific safe error category and, for capacity failures, actual available/required space. If you still see only the old “No output saved. Check the CSV/timestamp format, file access, or free disk space” message, replace the source with this update, run the Windows workflow and use the newly downloaded executable. Existing installed copies do not update automatically.
+
+## About the Developer and installable distribution (v1.1.0)
+
+About the Developer now uses Progress Ajayi's approved public profile from the reference app's about.js: physiologist/bioinformatician, First Class undergraduate Physiology qualification, Human Physiology master's with Distinction, and PhD in Molecular Biology and Genomics in progress. Relevant interests, portrait and published contact links are retained. The appendicitis-specific dedication and claims about statistical functions are not copied into ECG Studio. Source checked: https://appendicitis-learning-hub.vercel.app/about.js . Profile data is in frontend/developer.json and portrait assets are bundled locally. No live profile lookup occurs when the installed app runs.
+
+The new top-level workflow in this source ZIP is intended for the existing `ajayiprogress04-ctrl/ecg-studio` repository with ECG_Studio_Windows at the root. Upload BOTH top-level folders: `.github` and `ECG_Studio_Windows`. The root `.github/workflows/build-windows.yml` replaces the earlier Windows workflow. Do not put this workflow only inside the application subfolder. The old standalone-repository workflow is omitted from this handover to avoid conflicting instructions.
+
+The workflow builds two artifacts:
+
+- ECG-Studio-Windows-Installer: contains ECG_Studio_Setup_1.1.0.exe, a single setup executable to share.
+- ECG-Studio-Windows-Portable: optional ZIP retaining the earlier no-installation distribution.
+
+The installer uses Inno Setup. It installs for the current user under LocalAppData/Programs/ECG Studio, adds Start-menu access, offers a desktop shortcut and registers an uninstaller. Python and packages are included. No administrator prompt is requested by the installer itself; institutional endpoint policy may still require software approval. Windows 10/11 64-bit is the intended target. Close ECG Studio before installing/upgrading/uninstalling; Setup checks a named application mutex rather than forcibly terminating processing. Its stable AppId supports installing later versions over the same application.
+
+Uninstall removes installed application files; it does not intentionally remove user-selected recording/output folders or saved theme preferences. Never choose the installation folder as a research-data destination. Existing selected-output files remain on disk. Changes to code, profile or images require rebuilding and reinstalling. There is no automatic updater.
+
+The executable and installer include ECG Studio branding, app version and Progress Ajayi as publisher metadata. They are unsigned: publisher metadata does not create a verified digital signature or Microsoft reputation. A trusted code-signing certificate and a signing step would be separate work. Neither a signed binary nor SmartScreen acceptance has been verified.
+
+To share, distribute the generated setup .exe through your chosen file-sharing channel; never share the local 127.0.0.1 address. The new Share app dialog explains this. If you publish a real HTTPS installer download page, set download_url in frontend/developer.json and rebuild: Copy download link and Share download link then become available with a visible-copy fallback. No download address is invented, no repository visibility is changed, and nothing is published automatically. GitHub artifacts in a private repository require authorized access, so they are not universal public download links.
+
+This workspace prepared the installer source/workflow; it did not build or install the Windows setup executable. After the Actions build passes, install it on Windows, verify its shortcuts and About panel, test a small recording, and verify uninstall leaves external output folders intact.

@@ -18,3 +18,19 @@ Flask/Waitress could not be installed from the package index in this workspace, 
 After a successful Actions build: extract the complete app bundle; launch ECG_Studio.exe; verify native file/folder dialogs, all themes, keyboard navigation, open-folder actions, stop and clean shutdown. Test an invalid recording mixed with a valid recording, identical basenames in different folders, paths with spaces/non-ASCII characters, and re-running the same inputs. Confirm existing outputs and original recordings remain intact. Then compare a real representative recording with the original script before using large batches. No actual ECG input was supplied, so real-file compatibility, processing throughput, peak memory and multi-gigabyte reliability remain unverified.
 
 The local workflow preserves the original cleaning/segmentation, replaces cloud uploads with direct local file reads, adds permanent user-chosen output storage, and uses fresh folders to prevent duplicate cross-run appends. No diagnostic interpretation or signal modification was added.
+
+## Windows CI path-alias correction
+
+The owner supplied a Windows run showing nine passing tests and one failure in the output-folder assertion. Windows reported the same temporary directory with long and 8.3 user-folder names (`runneradmin` and `RUNNER~1`). The test incorrectly required equal path strings. It now uses Path.samefile to check filesystem identity. No test was skipped and no processing code was changed. The corrected Windows workflow has not yet been rerun.
+
+## Specific processing-failure diagnostics
+
+A supplied Windows screenshot confirms the executable opens, native input/output selection works and a real recording reaches a failed job. The screenshot does not identify the exception. Replaced the catch-all job message with separate disk-admission/reserve, no-valid-rows, encoding, CSV parser, permissions, missing-file, memory and general I/O categories. Disk messages report the actual available and safety-required bytes; raw parser exception text is never exposed. Error codes/types and safe capacity values are saved in the existing batch summary.
+
+Six diagnostic tests passed here, including real-size reporting and absence of supplied private values from exception messages. Python compilation passed. The splitting implementation is unchanged. The updated packaged Windows app and the owner's recording have not been rerun here; the cause of that recording failure is still unconfirmed.
+
+## About profile and installer handover (1.1.0)
+
+The owner reports that the existing Windows application now runs well. The new About panel uses the approved public profile/portrait retrieved from the reference app, with no new qualifications inferred. Local portrait download succeeded. JavaScript syntax and simulated-DOM checks passed for profile rendering, qualification/contact counts, opening dialogs, rejecting unsafe/loopback download links, local-only portrait references and copying a configured public download link. No actual public download URL is configured. Python compilation passed for the launcher mutex update. Existing splitter code remains unchanged.
+
+Prepared Inno Setup installer source and updated top-level Actions workflow for the existing repository. The setup is configured for per-user installation, Start-menu/optional desktop shortcuts, uninstallation, stable upgrade identity, branded version metadata and detecting the app while running. The pipeline checks installer product metadata after compilation. These settings and the workflow were inspected as source only: Windows packaging, Inno compilation, real installation/uninstallation/upgrade, native dialogs and live sharing were not run in this Linux workspace. The binary remains unsigned unless the owner later supplies a signing method.

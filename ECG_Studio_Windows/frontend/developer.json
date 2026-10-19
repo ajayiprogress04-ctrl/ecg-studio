@@ -1,0 +1,26 @@
+{
+  "name": "Progress Ajayi",
+  "role": "Physiologist and Bioinformatician",
+  "biography": "Progress Ajayi is a physiologist and bioinformatician with a first-class undergraduate qualification in Physiology and a master’s qualification in Human Physiology awarded with distinction. He is pursuing a PhD in Molecular Biology and Genomics.\n\nHis interests include bioinformatics, clinical and experimental data analysis, research software development, and clear scientific reporting.",
+  "qualifications": [
+    "Undergraduate qualification in Physiology — First Class.",
+    "Master’s qualification in Human Physiology — Distinction.",
+    "PhD in Molecular Biology and Genomics — in progress."
+  ],
+  "portrait": "assets/progress-ajayi.jpg",
+  "links": [
+    {
+      "label": "LinkedIn",
+      "url": "https://www.linkedin.com/in/progress-ajayi"
+    },
+    {
+      "label": "ECG Studio on GitHub",
+      "url": "https://github.com/ajayiprogress04-ctrl/ecg-studio"
+    },
+    {
+      "label": "Email Progress Ajayi",
+      "url": "mailto:ajayiprogress04@gmail.com"
+    }
+  ],
+  "download_url": ""
+}

@@ -1,6 +1,6 @@
 # My App Design Preferences
 
-Version 21 · Consolidated from the Meiosis and Chromosome 9 app discussions · Updated 18 October 2026
+Version 22 · Consolidated from the Meiosis and Chromosome 9 app discussions · Updated 18 October 2026
 
 ## How to use this brief
 
@@ -345,3 +345,11 @@ Packaged ECG Studio update: all three theme palettes deepened; localhost rejecte
 The owner approved a standalone Windows version instead of continuing with the hosted Python-service setup. Keep ECG Studio branding and the deeper three-theme styling. Let the owner choose local CSV recordings and an output folder; preserve the existing Python algorithm and original files. Ordinary use should require no separate Python installation, JupyterLab, Render, Vercel, internet access or uploads. Bundle dependencies when creating the Windows application. Keep host-specific cloud controls out of this local interface. Preserve completed outputs on disk until the owner deletes them.
 
 Deliver the complete source and a reproducible Windows build when a Windows binary cannot be built in the available environment. Explicitly distinguish source prepared, processing tested, Windows bundle built and Windows bundle tested. Do not label a source ZIP as a ready-to-run executable. This platform choice applies to ECG Studio and does not convert unrelated apps into Windows applications.
+
+## ECG Studio: developer profile and installable sharing — 19 October 2026
+
+The owner reports that the standalone Windows app now runs well. Preserve its processing workflow. Add an easily accessible About the Developer panel using the current approved public profile, portrait and contact details from the reference app. Do not infer an identity or academic qualification from unrelated shared-account history. Keep biography data maintainable separately from interface code and store portraits locally.
+
+For professional Windows distribution, prepare a single branded setup executable with version/publisher metadata, current-user installation, Start-menu access, optional desktop shortcut, and uninstaller. Preserve external research outputs and original recordings. Detect a running application before updates rather than forcibly closing a processing job. Retain a portable option. Distinguish installer source prepared, Windows installer built, real installation tested and digital signing completed. Publisher text is not a verified digital signature.
+
+For sharing a local desktop app, share its installer file or a real published HTTPS download link, never its loopback browser address, recording files or session tokens. Offer visible Copy/Share download controls only when a real public download URL has been supplied. Do not invent a domain, make a private repository public or publish a release merely to create a link. This is an ECG Studio distribution decision, not a rule that all apps must become Windows installers.

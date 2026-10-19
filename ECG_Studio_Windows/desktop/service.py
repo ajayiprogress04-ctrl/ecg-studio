@@ -14,6 +14,7 @@ from datetime import datetime
 from flask import Flask, jsonify, request, send_from_directory
 from werkzeug.exceptions import HTTPException
 from backend.splitter import split_ecg
+from desktop.diagnostics import InsufficientSpace, NoValidRows, describe_failure
 
 ROOT=Path(__file__).resolve().parents[1]
 
@@ -190,24 +191,27 @@ def create_app(dialog=windows_dialog,opener=None):
                 dest=batch_folder/f'{i+1:03d}_{name}'
                 try:
                     # Input stays at its original path. New output folders prevent overwrites.
-                    if shutil.disk_usage(batch_folder).free < p.stat().st_size*6+256*1024**2:
-                        raise OSError('capacity')
+                    required=p.stat().st_size*6+256*1024**2
+                    available=shutil.disk_usage(batch_folder).free
+                    if available < required:
+                        raise InsufficientSpace(required,available,'before processing')
                     def report(**values):
                         with lock:
                             if state['cancel_requested']:raise Cancelled()
                             job.update(values)
-                        if shutil.disk_usage(batch_folder).free < 128*1024**2:raise OSError('capacity')
+                        available=shutil.disk_usage(batch_folder).free
+                        if available < 128*1024**2:raise InsufficientSpace(128*1024**2,available,'during processing')
                     result=split_ecg(p,dest,report)
                     with lock:
                         if state['cancel_requested']:raise Cancelled()
-                    if not result['outputs']:raise ValueError('no rows')
+                    if not result['outputs']:raise NoValidRows()
                     with lock:job.update(result,status='complete',folder=str(dest),message='Saved successfully.')
                 except Cancelled:
                     shutil.rmtree(dest,ignore_errors=True)
                     with lock:job.update(status='cancelled',message='Stopped. Incomplete output removed.')
-                except Exception:
+                except Exception as error:
                     shutil.rmtree(dest,ignore_errors=True)
-                    with lock:job.update(status='failed',message='No output saved. Check the CSV/timestamp format, file access, or free disk space.')
+                    with lock:job.update(status='failed',**describe_failure(error))
             with lock:
                 summary={k:v for k,v in state.items() if k not in ('busy','cancel_requested')}
             try:(batch_folder/'ECG_Studio_summary.json').write_text(json.dumps(summary,indent=2),encoding='utf-8')

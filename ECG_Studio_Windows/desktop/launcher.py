@@ -9,7 +9,15 @@ import webbrowser
 
 
 def main():
-    if os.name=='nt':ctypes.windll.kernel32.SetConsoleTitleW('ECG Studio — keep open while processing')
+    if os.name=='nt':
+        from ctypes import wintypes
+        kernel=ctypes.windll.kernel32
+        kernel.SetConsoleTitleW.argtypes=[wintypes.LPCWSTR]
+        kernel.SetConsoleTitleW('ECG Studio — keep open while processing')
+        kernel.CreateMutexW.argtypes=[wintypes.LPVOID,wintypes.BOOL,wintypes.LPCWSTR]
+        kernel.CreateMutexW.restype=wintypes.HANDLE
+        # Held for the process lifetime; Setup uses this name to detect a running app.
+        app_mutex=kernel.CreateMutexW(None,False,'ECGStudioDesktopRunning')
     from waitress import create_server
     from desktop.service import create_app
     app=create_app()

@@ -20,3 +20,8 @@ Capacity depends on free disk space, RAM and processor speed. There is no unlimi
 This build is unsigned. Follow your institution's software approval process; do not disable Windows security tools. The source is included separately for review.
 
 A visible browser is the local interface, not a hosted website. Your recordings are not uploaded.
+
+INSTALLER EDITION (1.1.0)
+If you downloaded ECG_Studio_Setup_1.1.0.exe, double-click it and follow Setup. Open ECG Studio from the Start menu. The complete runtime is installed automatically. For removal, use Windows Settings > Apps > Installed apps > ECG Studio > Uninstall. Close the running application first. Output folders outside the installation directory are not deleted by Setup.
+
+Share the setup executable, not your local browser address and not your recording files. An optional public download link can be configured by the developer after publication. About the Developer contains the approved public profile of Progress Ajayi.

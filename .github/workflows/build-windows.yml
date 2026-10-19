@@ -1,69 +1,43 @@
 name: Build ECG Studio for Windows
-
 on:
   workflow_dispatch:
   push:
     branches: [main]
     paths:
-      - "ECG_Studio_Windows/**"
-      - ".github/workflows/build-windows.yml"
-
+      - 'ECG_Studio_Windows/**'
+      - '.github/workflows/build-windows.yml'
 permissions:
   contents: read
-
 jobs:
   build:
     runs-on: windows-latest
-
     defaults:
       run:
         working-directory: ECG_Studio_Windows
-
     steps:
       - name: Download project source
-        uses: actions/checkout@v4
-
+        uses: actions/checkout@v7
       - name: Prepare Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
-          python-version: "3.12"
+          python-version: '3.12'
           architecture: x64
-
       - name: Install build dependencies
-        run: >
-          python -m pip install
-          -r requirements-windows.txt
-          pyinstaller==6.11.1
-
-      - name: Test processing and desktop workflow
-        run: >
-          python -W ignore::ResourceWarning
-          -m unittest discover -s tests -v
-
-      - name: Check interface JavaScript
-        run: node --check frontend/desktop.js
-
+        run: python -m pip install -r requirements-windows.txt pyinstaller==6.11.1
+      - name: Test original algorithm and desktop workflow
+        run: python -W ignore::ResourceWarning -m unittest discover -s tests -v
+      - name: Check interface scripts
+        run: |
+          node --check frontend/desktop.js
+          node --check frontend/about.js
+          node tests/test_about.mjs
       - name: Build Windows application
-        run: >
-          python -m PyInstaller
-          --clean --noconfirm --onedir --paths .
-          --name ECG_Studio
-          --icon frontend/assets/icon.ico
-          --add-data "frontend;frontend"
-          desktop/launcher.py
-
+        run: python -m PyInstaller --clean --noconfirm --onedir --paths . --name ECG_Studio --icon frontend/assets/icon.ico --version-file installer/version_info.txt --add-data "frontend;frontend" desktop/launcher.py
       - name: Test bundled application
         shell: pwsh
         run: |
-          $p = Start-Process `
-            -FilePath "dist/ECG_Studio/ECG_Studio.exe" `
-            -ArgumentList "--self-test" `
-            -Wait -PassThru
-
-          if ($p.ExitCode -ne 0) {
-            throw "Application test failed: $($p.ExitCode)"
-          }
-
+          $p = Start-Process -FilePath "dist/ECG_Studio/ECG_Studio.exe" -ArgumentList "--self-test" -Wait -PassThru
+          if ($p.ExitCode -ne 0) { throw "Bundled application test failed: $($p.ExitCode)" }
       - name: Add instructions and licences
         shell: pwsh
         run: |
@@ -71,17 +45,34 @@ jobs:
           Copy-Item TEST_REPORT.md dist/ECG_Studio/TEST_REPORT.md
           Copy-Item App_Preferences.md dist/ECG_Studio/App_Preferences.md
           Copy-Item "$env:pythonLocation/LICENSE.txt" dist/ECG_Studio/PYTHON_LICENSE.txt
-
-      - name: Create Windows ZIP
+      - name: Prepare Windows installer compiler
+        shell: pwsh
+        run: choco upgrade innosetup -y --no-progress
+      - name: Build Windows installer
         shell: pwsh
         run: |
-          Compress-Archive `
-            -Path dist/ECG_Studio `
-            -DestinationPath ECG_Studio_Windows.zip
-
-      - name: Make application downloadable
+          $compiler = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $compiler)) { throw "Inno Setup compiler was not found." }
+          & $compiler installer/ECG_Studio.iss
+          if ($LASTEXITCODE -ne 0) { throw "Installer compilation failed." }
+      - name: Validate installer metadata
+        shell: pwsh
+        run: |
+          $file = Get-Item dist/installer/ECG_Studio_Setup_1.1.0.exe
+          if ($file.Length -lt 1000000) { throw "Installer is unexpectedly small." }
+          if ($file.VersionInfo.ProductName -ne 'ECG Studio') { throw "Installer product metadata is missing." }
+      - name: Create portable alternative
+        shell: pwsh
+        run: Compress-Archive -Path dist/ECG_Studio -DestinationPath ECG_Studio_Windows_Portable.zip
+      - name: Publish installable Windows download
         uses: actions/upload-artifact@v4
         with:
-          name: ECG-Studio-Windows-x64
-          path: ECG_Studio_Windows/ECG_Studio_Windows.zip
+          name: ECG-Studio-Windows-Installer
+          path: ECG_Studio_Windows/dist/installer/ECG_Studio_Setup_1.1.0.exe
+          retention-days: 14
+      - name: Publish portable alternative
+        uses: actions/upload-artifact@v4
+        with:
+          name: ECG-Studio-Windows-Portable
+          path: ECG_Studio_Windows/ECG_Studio_Windows_Portable.zip
           retention-days: 14

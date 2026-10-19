@@ -1,0 +1,22 @@
+ECG STUDIO — WINDOWS APPLICATION
+
+1. Extract this entire ZIP. Do not open the app from inside the ZIP preview.
+2. Open the ECG_Studio folder.
+3. Double-click ECG_Studio.exe.
+4. The application opens in your default browser at a local 127.0.0.1 address.
+5. Choose CSV recordings, then choose an output folder.
+6. Click Split recordings.
+7. Use Open output folder to see saved CSV files.
+8. Use Close application when finished. Closing only the browser tab does not stop the app.
+
+No separate Python installation, JupyterLab, Render, Vercel or internet connection is needed after this package is downloaded.
+
+Keep ECG_Studio.exe together with its _internal folder. Do not move the executable out on its own. You can create a Windows shortcut to the executable instead.
+
+Original recordings are never overwritten. Each run has a new output folder. Completed output files remain until you delete them. The summary contains filenames, paths and counts, not ECG sample values. Stop batch removes the current incomplete recording output; earlier completed results remain.
+
+Capacity depends on free disk space, RAM and processor speed. There is no unlimited file-size guarantee. Try a small de-identified recording before a large batch.
+
+This build is unsigned. Follow your institution's software approval process; do not disable Windows security tools. The source is included separately for review.
+
+A visible browser is the local interface, not a hosted website. Your recordings are not uploaded.
